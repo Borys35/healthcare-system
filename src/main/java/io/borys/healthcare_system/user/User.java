@@ -1,5 +1,6 @@
 package io.borys.healthcare_system.user;
 
+import io.borys.healthcare_system.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,6 +39,14 @@ public class User implements UserDetails {
     @Temporal(TemporalType.DATE)
     @Column(updatable = false)
     private Date joinedAt;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     @Version
     private Integer version;
