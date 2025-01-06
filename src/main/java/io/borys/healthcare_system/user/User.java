@@ -1,5 +1,7 @@
 package io.borys.healthcare_system.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.borys.healthcare_system.appointment.Appointment;
 import io.borys.healthcare_system.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,6 +49,16 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Appointment> patientAppointments = new HashSet<>();
+
+    @OneToMany(mappedBy = "doctor")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Appointment> doctorAppointments = new HashSet<>();
 
     @Version
     private Integer version;
