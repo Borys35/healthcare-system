@@ -41,6 +41,12 @@ public class AuthService {
                 roles.add(roleRepository.findByName("ADMIN"));
             }
 
+            if (user.getEmail().split("@")[1].contains("med.")) {
+                roles.add(roleRepository.findByName("DOCTOR"));
+            } else {
+                roles.add(roleRepository.findByName("PATIENT"));
+            }
+
             user.setRoles(roles);
 
             return userRepository.save(user);
