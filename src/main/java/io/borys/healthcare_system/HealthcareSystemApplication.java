@@ -23,13 +23,6 @@ public class HealthcareSystemApplication {
 		SpringApplication.run(HealthcareSystemApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner start(RoleRepository roleRepository) {
-		return args -> {
-			roleRepository.saveAll(List.of(new Role("ADMIN"), new Role("USER"), new Role("DOCTOR"), new Role("PATIENT")));
-		};
-	}
-
 	@GetMapping
 	public String index() {
 		return "Welcome to Healthcare System!";

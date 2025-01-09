@@ -16,7 +16,7 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public Set<Appointment> getAppointments(@PathVariable Long id) {
         return appointmentService.findAllByUser(id);

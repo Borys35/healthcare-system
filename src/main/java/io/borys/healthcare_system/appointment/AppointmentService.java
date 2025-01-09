@@ -45,6 +45,8 @@ public class AppointmentService {
     public Appointment save(AppointmentDto appointmentDto) {
         User doctor = checkAndReturnDoctor(appointmentDto.doctorId());
         User patient = checkAndReturnPatient(appointmentDto.patientId());
+        System.out.println(appointmentDto);
+        System.out.println(doctor);
         Appointment appointment = new Appointment(doctor, patient, appointmentDto.appointmentTime(),
                 appointmentDto.info(), appointmentDto.price(), appointmentDto.duration(), appointmentDto.specialization());
         return appointmentRepository.save(appointment);
