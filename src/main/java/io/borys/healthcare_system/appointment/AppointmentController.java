@@ -28,9 +28,9 @@ public class AppointmentController {
         return appointmentService.save(appointmentDto);
     }
 
-//    @PutMapping
-//    @PreAuthorize("hasAnyRole('ROLE_DOCTOR')")
-//    public Appointment changeAppointmentStatus() {
-//        return appointmentService.save(appointmentDto);
-//    }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DOCTOR')")
+    public Appointment updateAppointment(@PathVariable Long id, @RequestBody AppointmentDto appointmentDto) {
+        return appointmentService.update(id, appointmentDto);
+    }
 }
