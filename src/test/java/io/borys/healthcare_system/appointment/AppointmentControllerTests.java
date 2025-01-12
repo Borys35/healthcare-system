@@ -1,5 +1,12 @@
 package io.borys.healthcare_system.appointment;
 
+import io.borys.healthcare_system.auth.LoginResponse;
+import io.borys.healthcare_system.role.Role;
+import io.borys.healthcare_system.role.RoleRepository;
+import io.borys.healthcare_system.user.LoginUserDto;
+import io.borys.healthcare_system.user.RegisterUserDto;
+import io.borys.healthcare_system.user.User;
+import io.borys.healthcare_system.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,23 +39,75 @@ class AppointmentControllerTests {
 
     @Container
     @ServiceConnection
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
+    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withExposedPorts(5432)
+            .withDatabaseName("healthcare-system")
+            .withUsername("borys")
+            .withPassword("secret");
 
     private RestClient client;
 
-    private final String doctorJwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siaWQiOjIsIm5hbWUiOiJVU0VSIn0seyJpZCI6MywibmFtZSI6IkRPQ1RPUiJ9XSwic3ViIjoiYm9yeXNrYWMxMEBnbWFpbC5tZWQuY29tIiwiaWF0IjoxNzM2NjkxODA3LCJleHAiOjE3MzY2OTU0MDd9.6mhirYhW_OcCUeSPw9eUe7cYj6RMXG0aMCdedk74s8I";
+    private String doctorJwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siaWQiOjIsIm5hbWUiOiJVU0VSIn0seyJpZCI6MywibmFtZSI6IkRPQ1RPUiJ9XSwic3ViIjoiYm9yeXNrYWMxMEBnbWFpbC5tZWQuY29tIiwiaWF0IjoxNzM2NjkxODA3LCJleHAiOjE3MzY2OTU0MDd9.6mhirYhW_OcCUeSPw9eUe7cYj6RMXG0aMCdedk74s8I";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private AppointmentService appointmentService;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @BeforeAll
     void init() {
-        jdbcTemplate.execute("DROP TABLE IF EXISTS appointments");
+        roleRepository.saveAllAndFlush(
+                List.of(
+                        new Role("USER"),
+                        new Role("ADMIN"),
+                        new Role("DOCTOR"),
+                        new Role("PATIENT")
+                )
+        );
     }
 
     @BeforeEach
     void setUp() {
         client = RestClient.create("http://localhost:" + port);
+
+        jdbcTemplate.execute("""
+            TRUNCATE TABLE appointments CASCADE;
+            TRUNCATE TABLE user_roles CASCADE;
+            TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+        """);
+
+        client.post()
+                .uri("/auth/register")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .body(new RegisterUserDto("John", "Doctor", "doe@mail.med.com", "abcd1234"))
+                .retrieve()
+                .body(User.class);
+
+        client.post()
+                .uri("/auth/register")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .body(new RegisterUserDto("John", "Patient", "doe@mail.com", "abcd1234"))
+                .retrieve()
+                .body(User.class);
+
+        appointmentService.create(
+                new AppointmentDto(1L, 2L, LocalDateTime.now(), "TEST INFO", 2000.0, 60, "TEST SPEC.")
+        );
+
+        LoginResponse loginResponse = client.post()
+                .uri("/auth/login")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .body(new LoginUserDto("doe@mail.med.com", "abcd1234"))
+                .retrieve()
+                .body(LoginResponse.class);
+
+        assert loginResponse != null;
+        doctorJwtToken = loginResponse.getToken();
     }
 
     @Test
@@ -72,16 +131,14 @@ class AppointmentControllerTests {
                 .body(Appointment.class);
 
         assert appointment != null;
-        log.info(appointment.toString());
         assert appointment.getId() != null;
-        assert appointment.getDoctor().getId() != 1;
-        assert appointment.getPatient().getId() != 2;
+        assert appointment.getDoctor().getId() == 1;
+        assert appointment.getPatient().getId() == 2;
         assert Objects.equals(appointment.getSpecialization(), "Specialization");
     }
 
     @Test
     void shouldNotCreateAppointment() {
-
     }
 
     @Test
@@ -95,7 +152,6 @@ class AppointmentControllerTests {
                 });
 
         assert appointments != null;
-        log.info(appointments.toString());
         assert appointments.size() == 1;
     }
 
