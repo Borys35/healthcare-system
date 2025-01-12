@@ -29,7 +29,7 @@ public class AppointmentService {
     private User checkAndReturnDoctor(Long doctorId) {
         User doctor = userRepository.findById(doctorId).orElseThrow();
         if (doctor.getRoles().stream().noneMatch(role -> Objects.equals(role.getName(), "DOCTOR"))) {
-            throw new RuntimeException("Doctor role is not doctor");
+            throw new BadRoleException("Doctor role is not doctor");
         }
         return doctor;
     }
@@ -37,7 +37,7 @@ public class AppointmentService {
     private User checkAndReturnPatient(Long patientId) {
         User patient = userRepository.findById(patientId).orElseThrow();
         if (patient.getRoles().stream().noneMatch(role -> Objects.equals(role.getName(), "PATIENT"))) {
-            throw new RuntimeException("Patient role is not patient");
+            throw new BadRoleException("Patient role is not patient");
         }
         return patient;
     }
@@ -45,8 +45,6 @@ public class AppointmentService {
     public Appointment create(AppointmentDto appointmentDto) {
         User doctor = checkAndReturnDoctor(appointmentDto.doctorId());
         User patient = checkAndReturnPatient(appointmentDto.patientId());
-        System.out.println(appointmentDto);
-        System.out.println(doctor);
         Appointment appointment = new Appointment(doctor, patient, appointmentDto.appointmentTime(),
                 appointmentDto.info(), appointmentDto.price(), appointmentDto.durationInMinutes(), appointmentDto.specialization());
         return appointmentRepository.save(appointment);
