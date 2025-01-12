@@ -5,6 +5,7 @@ import io.borys.healthcare_system.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,7 +46,13 @@ public class AppointmentService {
     public Appointment create(AppointmentDto appointmentDto) {
         User doctor = checkAndReturnDoctor(appointmentDto.doctorId());
         User patient = checkAndReturnPatient(appointmentDto.patientId());
-        Appointment appointment = new Appointment(doctor, patient, appointmentDto.appointmentTime(),
+        LocalDateTime start = appointmentDto.date();
+        LocalDateTime end = appointmentDto.date().plusMinutes(appointmentDto.durationInMinutes());
+        boolean isBetween = appointmentRepository.existsByDoctorIdAndDates(appointmentDto.doctorId(), start, end);
+        if (isBetween) {
+            throw new NotAvailableDateException("Not available date: " + appointmentDto.date() + " with duration: " + appointmentDto.durationInMinutes());
+        }
+        Appointment appointment = new Appointment(doctor, patient, appointmentDto.date(),
                 appointmentDto.info(), appointmentDto.price(), appointmentDto.durationInMinutes(), appointmentDto.specialization());
         return appointmentRepository.save(appointment);
     }
@@ -56,7 +63,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow();
         appointment.setDoctor(doctor);
         appointment.setPatient(patient);
-        appointment.setDate(appointmentDto.appointmentTime());
+        appointment.setStartDate(appointmentDto.date());
         appointment.setInfo(appointmentDto.info());
         appointment.setPrice(appointmentDto.price());
         appointment.setDurationInMinutes(appointmentDto.durationInMinutes());

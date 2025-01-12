@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public record AppointmentDto(Long doctorId,
                              Long patientId,
-                             LocalDateTime appointmentTime,
+                             LocalDateTime date,
                              String info,
                              Double price,
                              Integer durationInMinutes,
