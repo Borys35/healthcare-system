@@ -1,5 +1,6 @@
 package io.borys.healthcare_system.appointment;
 
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import io.borys.healthcare_system.auth.LoginResponse;
 import io.borys.healthcare_system.role.Role;
 import io.borys.healthcare_system.role.RoleRepository;
@@ -17,7 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -27,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.Assert.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
@@ -138,7 +143,89 @@ class AppointmentControllerTests {
     }
 
     @Test
-    void shouldNotCreateAppointment() {
+    void shouldNotCreateAppointmentDueToInvalidDate() {
+        AppointmentDto appointmentDto = new AppointmentDto(
+                1L,
+                2L,
+                LocalDateTime.of(2025, 1, 10, 16, 0, 0),
+                "Info",
+                1000.0,
+                90,
+                "Specialization");
+
+        AppointmentDto appointmentDto2 = new AppointmentDto(
+                1L,
+                2L,
+                LocalDateTime.of(2025, 1, 10, 17, 0, 0),
+                "Info",
+                1000.0,
+                90,
+                "Specialization");
+
+        Appointment appointment = client
+                .post()
+                .uri("/appointments")
+                .header("Authorization", "Bearer " + doctorJwtToken)
+                .contentType(APPLICATION_JSON)
+                .body(appointmentDto)
+                .retrieve()
+                .body(Appointment.class);
+
+        assert appointment != null;
+
+        assertThrows(HttpClientErrorException.Unauthorized.class, () -> {
+            client
+                    .post()
+                    .uri("/appointments")
+                    .header("Authorization", "Bearer " + doctorJwtToken)
+                    .contentType(APPLICATION_JSON)
+                    .body(appointmentDto2)
+                    .retrieve()
+                    .body(Appointment.class);
+        });
+    }
+
+    @Test
+    void shouldNotCreateAppointmentDueToInvalidDoctorId() {
+        AppointmentDto appointmentDto = new AppointmentDto(
+                1L,
+                2L,
+                LocalDateTime.of(2025, 1, 10, 16, 0, 0),
+                "Info",
+                1000.0,
+                90,
+                "Specialization");
+
+        AppointmentDto appointmentDto2 = new AppointmentDto(
+                2L,
+                2L,
+                LocalDateTime.of(2025, 1, 10, 20, 0, 0),
+                "Info",
+                1000.0,
+                90,
+                "Specialization");
+
+        Appointment appointment = client
+                .post()
+                .uri("/appointments")
+                .header("Authorization", "Bearer " + doctorJwtToken)
+                .contentType(APPLICATION_JSON)
+                .body(appointmentDto)
+                .retrieve()
+                .body(Appointment.class);
+
+        assert appointment != null;
+
+        assertThrows(HttpClientErrorException.Unauthorized.class, () -> {
+            client
+                    .post()
+                    .uri("/appointments")
+                    .header("Authorization", "Bearer " + doctorJwtToken)
+                    .contentType(APPLICATION_JSON)
+                    .body(appointmentDto2)
+                    .retrieve()
+                    .body(Appointment.class);
+        });
     }
 
     @Test
@@ -153,9 +240,5 @@ class AppointmentControllerTests {
 
         assert appointments != null;
         assert appointments.size() == 1;
-    }
-
-    @Test
-    void shouldFindOneAppointment() {
     }
 }
