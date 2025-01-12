@@ -7,6 +7,6 @@ public record AppointmentDto(Long doctorId,
                              LocalDateTime appointmentTime,
                              String info,
                              Double price,
-                             Integer duration,
+                             Integer durationInMinutes,
                              String specialization) {
 }

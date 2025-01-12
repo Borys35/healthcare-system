@@ -27,13 +27,13 @@ public class Appointment {
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
 
-    private LocalDateTime appointmentTime;
+    private LocalDateTime date;
 
     private String info;
 
     private Double price;
 
-    private Integer duration;
+    private Integer durationInMinutes;
 
     private String specialization;
 
@@ -41,13 +41,13 @@ public class Appointment {
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
     @Builder
-    public Appointment(User doctor, User patient, LocalDateTime appointmentTime, String info, Double price, Integer duration, String specialization) {
+    public Appointment(User doctor, User patient, LocalDateTime date, String info, Double price, Integer durationInMinutes, String specialization) {
         this.doctor = doctor;
         this.patient = patient;
-        this.appointmentTime = appointmentTime;
+        this.date = date;
         this.info = info;
         this.price = price;
-        this.duration = duration;
+        this.durationInMinutes = durationInMinutes;
         this.specialization = specialization;
     }
 }

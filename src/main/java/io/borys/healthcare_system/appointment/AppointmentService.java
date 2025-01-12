@@ -42,13 +42,13 @@ public class AppointmentService {
         return patient;
     }
 
-    public Appointment save(AppointmentDto appointmentDto) {
+    public Appointment create(AppointmentDto appointmentDto) {
         User doctor = checkAndReturnDoctor(appointmentDto.doctorId());
         User patient = checkAndReturnPatient(appointmentDto.patientId());
         System.out.println(appointmentDto);
         System.out.println(doctor);
         Appointment appointment = new Appointment(doctor, patient, appointmentDto.appointmentTime(),
-                appointmentDto.info(), appointmentDto.price(), appointmentDto.duration(), appointmentDto.specialization());
+                appointmentDto.info(), appointmentDto.price(), appointmentDto.durationInMinutes(), appointmentDto.specialization());
         return appointmentRepository.save(appointment);
     }
 
@@ -58,10 +58,10 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow();
         appointment.setDoctor(doctor);
         appointment.setPatient(patient);
-        appointment.setAppointmentTime(appointmentDto.appointmentTime());
+        appointment.setDate(appointmentDto.appointmentTime());
         appointment.setInfo(appointmentDto.info());
         appointment.setPrice(appointmentDto.price());
-        appointment.setDuration(appointmentDto.duration());
+        appointment.setDurationInMinutes(appointmentDto.durationInMinutes());
         appointment.setSpecialization(appointmentDto.specialization());
         appointmentRepository.save(appointment);
 
