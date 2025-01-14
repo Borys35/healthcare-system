@@ -3,10 +3,12 @@ package io.borys.healthcare_system.appointment;
 import io.borys.healthcare_system.auth.LoginResponse;
 import io.borys.healthcare_system.role.Role;
 import io.borys.healthcare_system.role.RoleRepository;
+import io.borys.healthcare_system.user.DoctorAppointmentTypeSet;
 import io.borys.healthcare_system.user.LoginUserDto;
 import io.borys.healthcare_system.user.RegisterUserDto;
 import io.borys.healthcare_system.user.User;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONString;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,9 +28,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -76,6 +80,7 @@ class AppointmentControllerTest {
         jdbcTemplate.execute("""
             TRUNCATE TABLE appointments CASCADE;
             TRUNCATE TABLE user_roles CASCADE;
+            TRUNCATE TABLE user_doctor_appointment_types CASCADE;
             TRUNCATE TABLE users RESTART IDENTITY CASCADE;
         """);
 
@@ -95,9 +100,6 @@ class AppointmentControllerTest {
                 .retrieve()
                 .body(User.class);
 
-        appointmentService.create(
-                new AppointmentDto(1L, 2L, LocalDateTime.now(), "TEST INFO", 2000.0, 60, "TEST SPEC.", AppointmentStatus.PENDING)
-        );
 
         LoginResponse loginResponse = client.post()
                 .uri("/auth/login")
@@ -109,6 +111,31 @@ class AppointmentControllerTest {
 
         assert loginResponse != null;
         doctorJwtToken = loginResponse.getToken();
+
+        client.put()
+                .uri("/users/doctors/1/specialization")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .header("Authorization", "Bearer " + doctorJwtToken)
+                .body("\"CARDIOLOGIST\"")
+                .retrieve()
+                .toBodilessEntity();
+
+        DoctorAppointmentTypeSet set = new DoctorAppointmentTypeSet();
+        set.setAppointmentTypes(Set.of("Consultation"));
+        client.put()
+                .uri("/users/doctors/1/appointment-types")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .header("Authorization", "Bearer " + doctorJwtToken)
+                .body(set)
+                .retrieve()
+                .toBodilessEntity();
+
+        appointmentService.create(
+                new AppointmentDto(1L, 2L, LocalDateTime.now(), "TEST INFO", 2000.0, 60, "Consultation", AppointmentStatus.PENDING)
+        );
+
     }
 
     @Test
@@ -120,7 +147,7 @@ class AppointmentControllerTest {
                 "Info",
                 1000.0,
                 90,
-                "Specialization",
+                "Consultation",
                 AppointmentStatus.PENDING);
 
         Appointment appointment = client
@@ -136,7 +163,7 @@ class AppointmentControllerTest {
         assert appointment.getId() != null;
         assert appointment.getDoctor().getId() == 1;
         assert appointment.getPatient().getId() == 2;
-        assert Objects.equals(appointment.getAppointmentType(), "Specialization");
+        assert Objects.equals(appointment.getAppointmentType(), "Consultation");
     }
 
     @Test
@@ -148,7 +175,7 @@ class AppointmentControllerTest {
                 "Info",
                 1000.0,
                 90,
-                "Specialization",
+                "Consultation",
                 AppointmentStatus.PENDING);
 
         AppointmentDto appointmentDto2 = new AppointmentDto(
@@ -158,7 +185,7 @@ class AppointmentControllerTest {
                 "Info",
                 1000.0,
                 90,
-                "Specialization",
+                "Consultation",
                 AppointmentStatus.PENDING);
 
         Appointment appointment = client
@@ -193,7 +220,7 @@ class AppointmentControllerTest {
                 "Info",
                 1000.0,
                 90,
-                "Specialization",
+                "Consultation",
                 AppointmentStatus.PENDING);
 
         AppointmentDto appointmentDto2 = new AppointmentDto(
@@ -203,7 +230,7 @@ class AppointmentControllerTest {
                 "Info",
                 1000.0,
                 90,
-                "Specialization",
+                "Consultation",
                 AppointmentStatus.PENDING);
 
         Appointment appointment = client

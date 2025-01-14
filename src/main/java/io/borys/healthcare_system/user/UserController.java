@@ -51,12 +51,9 @@ public class UserController {
 
     @GetMapping("/doctors")
     Page<User> findAllDoctors(@RequestParam(required = false) DoctorSpecialization specialization, Pageable pageable) {
-        System.out.println("SPEC " + specialization);
         if (specialization != null) {
-            System.out.println("NOT NULL");
             return userRepository.findAllDoctorsByDoctorSpecialization(specialization, pageable);
         } else {
-            System.out.println("NULL");
             return userRepository.findAllDoctors(Pageable.unpaged());
         }
     }

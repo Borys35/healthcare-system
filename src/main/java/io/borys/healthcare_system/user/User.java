@@ -69,7 +69,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private DoctorSpecialization doctorSpecialization = DoctorSpecialization.PATIENT;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> doctorAppointmentTypes = new HashSet<>();
 
     @Builder
