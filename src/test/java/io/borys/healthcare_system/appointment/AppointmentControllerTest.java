@@ -34,7 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AppointmentControllerTests {
+class AppointmentControllerTest {
     @LocalServerPort
     private int port;
 
