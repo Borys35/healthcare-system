@@ -24,6 +24,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Integer version;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -55,13 +58,17 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<Appointment> patientAppointments = new HashSet<>();
 
+    // Doctor-specified fields
     @OneToMany(mappedBy = "doctor")
     @ToString.Exclude
     @JsonIgnore
     private Set<Appointment> doctorAppointments = new HashSet<>();
 
-    @Version
-    private Integer version;
+    @Enumerated(EnumType.STRING)
+    private DoctorSpecialization doctorSpecialization = DoctorSpecialization.UNSET;
+
+    @ElementCollection
+    private Set<String> doctorAppointmentTypes = new HashSet<>();
 
     @Builder
     public User(String firstName, String lastName, String email) {

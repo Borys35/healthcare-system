@@ -37,20 +37,20 @@ public class Appointment {
 
     private Integer durationInMinutes;
 
-    private String specialization;
+    private String appointmentType;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
     @Builder
-    public Appointment(User doctor, User patient, LocalDateTime startDate, String info, Double price, Integer durationInMinutes, String specialization) {
+    public Appointment(User doctor, User patient, LocalDateTime startDate, String info, Double price, Integer durationInMinutes, String appointmentType) {
         this.doctor = doctor;
         this.patient = patient;
         this.startDate = startDate;
         this.info = info;
         this.price = price;
         this.durationInMinutes = durationInMinutes;
-        this.specialization = specialization;
+        this.appointmentType = appointmentType;
         this.endDate = startDate.plusMinutes(durationInMinutes);
     }
 }

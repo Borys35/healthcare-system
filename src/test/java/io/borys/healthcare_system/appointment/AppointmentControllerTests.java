@@ -1,13 +1,11 @@
 package io.borys.healthcare_system.appointment;
 
-import com.github.dockerjava.api.exception.UnauthorizedException;
 import io.borys.healthcare_system.auth.LoginResponse;
 import io.borys.healthcare_system.role.Role;
 import io.borys.healthcare_system.role.RoleRepository;
 import io.borys.healthcare_system.user.LoginUserDto;
 import io.borys.healthcare_system.user.RegisterUserDto;
 import io.borys.healthcare_system.user.User;
-import io.borys.healthcare_system.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -139,7 +135,7 @@ class AppointmentControllerTests {
         assert appointment.getId() != null;
         assert appointment.getDoctor().getId() == 1;
         assert appointment.getPatient().getId() == 2;
-        assert Objects.equals(appointment.getSpecialization(), "Specialization");
+        assert Objects.equals(appointment.getAppointmentType(), "Specialization");
     }
 
     @Test
