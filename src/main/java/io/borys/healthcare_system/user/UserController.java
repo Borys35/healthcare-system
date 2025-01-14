@@ -1,6 +1,8 @@
 package io.borys.healthcare_system.user;
 
 import io.borys.healthcare_system.global.DoctorPatientHelper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +47,14 @@ public class UserController {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
         doctor.setDoctorAppointmentTypes(doctorAppointmentTypeSet.getAppointmentTypes());
         userRepository.save(doctor);
+    }
+
+    @GetMapping("/doctors")
+    Page<User> findAllDoctors(@RequestParam(required = false) DoctorSpecialization specialization, Pageable pageable) {
+        if (specialization != null) {
+            return null;
+        } else {
+            return userRepository.findAllDoctors(Pageable.unpaged());
+        }
     }
 }

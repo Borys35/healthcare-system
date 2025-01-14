@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/users/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/users/doctors/**").hasRole("DOCTOR")
                         .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)

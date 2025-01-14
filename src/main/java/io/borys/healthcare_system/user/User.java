@@ -67,7 +67,7 @@ public class User implements UserDetails {
     private Set<Appointment> doctorAppointments = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
-    private DoctorSpecialization doctorSpecialization = DoctorSpecialization.UNSET;
+    private DoctorSpecialization doctorSpecialization = DoctorSpecialization.PATIENT;
 
     @ElementCollection
     private Set<String> doctorAppointmentTypes = new HashSet<>();

@@ -2,10 +2,7 @@ package io.borys.healthcare_system.auth;
 
 import io.borys.healthcare_system.role.Role;
 import io.borys.healthcare_system.role.RoleRepository;
-import io.borys.healthcare_system.user.LoginUserDto;
-import io.borys.healthcare_system.user.RegisterUserDto;
-import io.borys.healthcare_system.user.User;
-import io.borys.healthcare_system.user.UserRepository;
+import io.borys.healthcare_system.user.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +40,7 @@ public class AuthService {
 
             if (user.getEmail().split("@")[1].contains("med.")) {
                 roles.add(roleRepository.findByName("DOCTOR"));
+                user.setDoctorSpecialization(DoctorSpecialization.UNSET);
             } else {
                 roles.add(roleRepository.findByName("PATIENT"));
             }

@@ -1,5 +1,7 @@
 package io.borys.healthcare_system.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +14,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-//    List<User> findAllDoctors() {
-//        return userRepository.findAllDoctors();
-//    }
+    Page<User> findAllDoctors(Pageable pageable) {
+        return userRepository.findAllDoctors(pageable);
+    }
 }

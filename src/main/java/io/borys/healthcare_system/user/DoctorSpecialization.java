@@ -1,6 +1,7 @@
 package io.borys.healthcare_system.user;
 
 public enum DoctorSpecialization {
+    PATIENT,
     UNSET,
     CARDIOLOGIST,       // Heart and cardiovascular system specialist
     DERMATOLOGIST,      // Skin, hair, and nail specialist
