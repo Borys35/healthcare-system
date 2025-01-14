@@ -17,4 +17,8 @@ public class UserService {
     Page<User> findAllDoctors(Pageable pageable) {
         return userRepository.findAllDoctors(pageable);
     }
+
+    Page<User> findAllDoctorsByDoctorSpecialization(Pageable pageable, DoctorSpecialization specialization) {
+        return userRepository.findAllDoctorsByDoctorSpecialization(specialization, pageable);
+    }
 }

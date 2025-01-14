@@ -15,10 +15,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
         SELECT u FROM User u
-        WHERE u.doctorSpecialization != null
-        OR u.doctorSpecialization != 'PATIENT'
+        WHERE u.doctorSpecialization IS NOT NULL
+        AND u.doctorSpecialization != 'PATIENT'
 """)
     Page<User> findAllDoctors(Pageable pageable);
 
+    @Query("""
+        SELECT u FROM User u
+        WHERE u.doctorSpecialization IS NOT NULL
+        AND u.doctorSpecialization != 'PATIENT'
+        AND u.doctorSpecialization = :doctorSpecialization
+""")
     Page<User> findAllDoctorsByDoctorSpecialization(DoctorSpecialization doctorSpecialization, Pageable pageable);
 }
