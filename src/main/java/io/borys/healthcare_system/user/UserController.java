@@ -33,14 +33,14 @@ public class UserController {
         userRepository.save(user);
     }
 
-    @PutMapping("/doctor/{id}/specialization")
+    @PutMapping("/doctors/{id}/specialization")
     void setSpecialization(@PathVariable long id, @RequestBody DoctorSpecialization specialization) {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
         doctor.setDoctorSpecialization(specialization);
         userRepository.save(doctor);
     }
 
-    @PutMapping("/doctor/{id}/appointment-types")
+    @PutMapping("/doctors/{id}/appointment-types")
     void setAppointmentTypes(@PathVariable long id, @RequestBody DoctorAppointmentTypeSet doctorAppointmentTypeSet) {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
         doctor.setDoctorAppointmentTypes(doctorAppointmentTypeSet.getAppointmentTypes());

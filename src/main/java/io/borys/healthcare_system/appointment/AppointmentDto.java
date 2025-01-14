@@ -8,5 +8,6 @@ public record AppointmentDto(Long doctorId,
                              String info,
                              Double price,
                              Integer durationInMinutes,
-                             String appointmentType) {
+                             String appointmentType,
+                             AppointmentStatus status) {
 }

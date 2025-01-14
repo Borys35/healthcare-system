@@ -35,14 +35,14 @@ public class AppointmentService {
     if the time doesn't collide with other appointments,
     or if the doctor has given appointmentType as their service.
     Available appointmentType values can be set
-    by a Doctor using [PUT] /users/doctor/{id}/appointment-types
+    by a Doctor using [PUT] /users/doctors/{id}/appointment-types
      */
     public Appointment create(AppointmentDto appointmentDto) {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(appointmentDto.doctorId());
         User patient = doctorPatientHelper.checkAndReturnPatient(appointmentDto.patientId());
         LocalDateTime start = appointmentDto.date();
         LocalDateTime end = appointmentDto.date().plusMinutes(appointmentDto.durationInMinutes());
-        boolean isBetween = appointmentRepository.existsByDoctorIdAndDates(appointmentDto.doctorId(), start, end);
+        boolean isBetween = appointmentRepository.existsByDoctorIdAndOccupiedDate(appointmentDto.doctorId(), start, end);
         if (isBetween) {
             throw new NotAvailableDateException("Not available date: " + appointmentDto.date() + " with duration: " + appointmentDto.durationInMinutes());
         }
@@ -59,7 +59,7 @@ public class AppointmentService {
         User patient = doctorPatientHelper.checkAndReturnPatient(appointmentDto.patientId());
         LocalDateTime start = appointmentDto.date();
         LocalDateTime end = appointmentDto.date().plusMinutes(appointmentDto.durationInMinutes());
-        boolean isBetween = appointmentRepository.existsByDoctorIdAndDates(appointmentDto.doctorId(), start, end);
+        boolean isBetween = appointmentRepository.existsByDoctorIdAndNotAppointmentIdAndOccupiedDate(id, appointmentDto.doctorId(), start, end);
         if (isBetween) {
             throw new NotAvailableDateException("Not available date: " + appointmentDto.date() + " with duration: " + appointmentDto.durationInMinutes());
         }
@@ -74,6 +74,7 @@ public class AppointmentService {
         appointment.setPrice(appointmentDto.price());
         appointment.setDurationInMinutes(appointmentDto.durationInMinutes());
         appointment.setAppointmentType(appointmentDto.appointmentType());
+        appointment.setStatus(appointmentDto.status());
         appointmentRepository.save(appointment);
 
         return appointment;

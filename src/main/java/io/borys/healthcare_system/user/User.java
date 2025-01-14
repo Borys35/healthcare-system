@@ -34,10 +34,12 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(unique = true, nullable = false)
+    @JsonIgnore
     private String email;
 
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private String password;
 
     @CreatedDate

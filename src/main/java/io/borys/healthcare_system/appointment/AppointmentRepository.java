@@ -20,7 +20,22 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
       AND (a.startDate BETWEEN :startDate AND :endDate
            OR a.endDate BETWEEN :startDate AND :endDate)
     """)
-    public boolean existsByDoctorIdAndDates(
+    public boolean existsByDoctorIdAndOccupiedDate(
+            @Param("doctorId") Long doctorId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
+    @Query("""
+    SELECT CASE WHEN COUNT(a) > 0 THEN TRUE ELSE FALSE END
+    FROM Appointment a
+    WHERE a.doctor.id = :doctorId
+      AND a.id != :appointmentId
+      AND (a.startDate BETWEEN :startDate AND :endDate
+           OR a.endDate BETWEEN :startDate AND :endDate)
+    """)
+    public boolean existsByDoctorIdAndNotAppointmentIdAndOccupiedDate(
+            @Param("appointmentId") Long appointmentId,
             @Param("doctorId") Long doctorId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate

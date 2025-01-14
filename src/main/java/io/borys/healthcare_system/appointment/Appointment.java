@@ -43,6 +43,18 @@ public class Appointment {
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
     @Builder
+    public Appointment(User doctor, User patient, LocalDateTime startDate, String info, Double price, Integer durationInMinutes, String appointmentType, AppointmentStatus status) {
+        this.doctor = doctor;
+        this.patient = patient;
+        this.startDate = startDate;
+        this.info = info;
+        this.price = price;
+        this.durationInMinutes = durationInMinutes;
+        this.appointmentType = appointmentType;
+        this.endDate = startDate.plusMinutes(durationInMinutes);
+        this.status = status;
+    }
+
     public Appointment(User doctor, User patient, LocalDateTime startDate, String info, Double price, Integer durationInMinutes, String appointmentType) {
         this.doctor = doctor;
         this.patient = patient;

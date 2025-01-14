@@ -96,7 +96,7 @@ class AppointmentControllerTests {
                 .body(User.class);
 
         appointmentService.create(
-                new AppointmentDto(1L, 2L, LocalDateTime.now(), "TEST INFO", 2000.0, 60, "TEST SPEC.")
+                new AppointmentDto(1L, 2L, LocalDateTime.now(), "TEST INFO", 2000.0, 60, "TEST SPEC.", AppointmentStatus.PENDING)
         );
 
         LoginResponse loginResponse = client.post()
@@ -120,7 +120,8 @@ class AppointmentControllerTests {
                 "Info",
                 1000.0,
                 90,
-                "Specialization");
+                "Specialization",
+                AppointmentStatus.PENDING);
 
         Appointment appointment = client
                 .post()
@@ -147,7 +148,8 @@ class AppointmentControllerTests {
                 "Info",
                 1000.0,
                 90,
-                "Specialization");
+                "Specialization",
+                AppointmentStatus.PENDING);
 
         AppointmentDto appointmentDto2 = new AppointmentDto(
                 1L,
@@ -156,7 +158,8 @@ class AppointmentControllerTests {
                 "Info",
                 1000.0,
                 90,
-                "Specialization");
+                "Specialization",
+                AppointmentStatus.PENDING);
 
         Appointment appointment = client
                 .post()
@@ -190,7 +193,8 @@ class AppointmentControllerTests {
                 "Info",
                 1000.0,
                 90,
-                "Specialization");
+                "Specialization",
+                AppointmentStatus.PENDING);
 
         AppointmentDto appointmentDto2 = new AppointmentDto(
                 2L,
@@ -199,7 +203,8 @@ class AppointmentControllerTests {
                 "Info",
                 1000.0,
                 90,
-                "Specialization");
+                "Specialization",
+                AppointmentStatus.PENDING);
 
         Appointment appointment = client
                 .post()
