@@ -1,6 +1,7 @@
 package io.borys.healthcare_system.user;
 
 import io.borys.healthcare_system.global.DoctorPatientHelper;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/doctors/{id}/specialization")
+    @PreAuthorize("hasRole('DOCTOR')")
     void setSpecialization(@PathVariable long id, @RequestBody DoctorSpecialization specialization) {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
         doctor.setDoctorSpecialization(specialization);
@@ -47,10 +49,17 @@ public class UserController {
     }
 
     @PutMapping("/doctors/{id}/appointment-types")
+    @PreAuthorize("hasRole('DOCTOR')")
     void setAppointmentTypes(@PathVariable long id, @RequestBody DoctorAppointmentTypeSet doctorAppointmentTypeSet) {
         User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
         doctor.setDoctorAppointmentTypes(doctorAppointmentTypeSet.getAppointmentTypes());
         userRepository.save(doctor);
+    }
+
+    @GetMapping("/doctors/{id}/appointment-types")
+    List<String> setAppointmentTypes(@PathVariable long id) {
+        User doctor = doctorPatientHelper.checkAndReturnDoctor(id);
+        return doctor.getDoctorAppointmentTypes().stream().toList();
     }
 
     @GetMapping("/doctors")

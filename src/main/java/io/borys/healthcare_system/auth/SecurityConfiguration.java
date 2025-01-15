@@ -38,9 +38,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/users/doctors/**").hasRole("DOCTOR")
+                        .requestMatchers("/users/doctors/**").permitAll()
                         .requestMatchers("/users/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().hasRole("ADMIN"))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
