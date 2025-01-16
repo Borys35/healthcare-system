@@ -1,6 +1,7 @@
 package io.borys.healthcare_system.appointment;
 
 import io.borys.healthcare_system.global.DoctorPatientHelper;
+import io.borys.healthcare_system.messaging.KafkaProducerService;
 import io.borys.healthcare_system.user.User;
 import io.borys.healthcare_system.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final DoctorPatientHelper doctorPatientHelper;
+    private final KafkaProducerService kafkaProducerService;
 
     public Set<Appointment> findAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -51,6 +53,10 @@ public class AppointmentService {
         }
         Appointment appointment = new Appointment(doctor, patient, appointmentDto.date(),
                 appointmentDto.info(), appointmentDto.price(), appointmentDto.durationInMinutes(), appointmentDto.appointmentType());
+
+        // Send message to Kafka after successful appointment booking
+        kafkaProducerService.sendAppointmentEvent("Appointment created for patient: " + patient.getId());
+
         return appointmentRepository.save(appointment);
     }
 
