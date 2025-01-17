@@ -25,8 +25,7 @@ A monolithic REST API for managing healthcare operations, built using Spring Boo
 - **Database**: PostgreSQL.
 - **Messaging**: Apache Kafka.
 - **Testing**: JUnit, Mockito, Testcontainers.
-- **Build Tool**: Maven/Gradle.
-- **Deployment**: Docker.
+- **Build Tool**: Maven.
 
 ## System Architecture
 
@@ -39,7 +38,7 @@ A monolithic REST API for managing healthcare operations, built using Spring Boo
 
 ### Prerequisites
 - Java 17 or later
-- Maven or Gradle
+- Maven
 - Docker (for running PostgreSQL, Kafka, and Zookeeper)
 
 ### Installation Steps
@@ -172,4 +171,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## Contact
 
-For any inquiries or feedback, please reach out to me at [your-email@example.com].
+For any inquiries or feedback, please reach out to me at [hello@boryskaczmarek.pl].
